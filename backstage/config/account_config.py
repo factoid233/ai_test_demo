@@ -26,3 +26,5 @@ db_local = {
     'pwd': os.getenv('DB_172_PWD'),
     'port': 3306
 }
+oss_AccessKeyID = os.getenv('OSSUSER')
+oss_AccessKeySecret = os.getenv('OSSPWD')

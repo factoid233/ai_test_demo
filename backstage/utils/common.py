@@ -29,5 +29,11 @@ def generate_uuid():
     return uuid.uuid1().hex
 
 
+def get_class_functions(_class):
+    if type(_class) != type:
+        raise ValueError('传入参数应该为 类对象')
+    return list(filter(lambda x: not x.startswith("__"), _class.__dict__.keys()))
+
+
 if __name__ == '__main__':
     str_to_json("123{")
