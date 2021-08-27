@@ -13,3 +13,15 @@ oss_bucket_name = 'ai-test-images'
 sema_num_request = 3
 # 默认请求超时时间
 request_timeout = 10
+
+# 数据库中加密的部分字段
+encrypt_key = {
+    'simple': ['owner_card_type_number', 'name', 'identity_number',
+               'gou_mai_fang_ming_cheng', 'sfzhmhzzjgdm', 'owner'],
+    'complex': {
+        'transfer_reg_summary': ['机动车所有人/身份证明名称/号码'],
+        'transfer_register': ['姓名/名称', '身份证明名称/号码'],
+        'change_record': ['姓名/名称', '身份证明名称/号码'],
+        'mortgage_register': ['抵押权人姓名/名称', '身份证明名称/号码']
+    }
+}

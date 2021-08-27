@@ -11,8 +11,11 @@ class Initialization:
             processors=[
                 structlog.processors.add_log_level,
                 structlog.processors.TimeStamper(fmt="iso"),
+                structlog.processors.format_exc_info,
+                structlog.processors.StackInfoRenderer(),
                 structlog.processors.JSONRenderer(serializer=cls._log_serializer),
-            ])
+            ],
+        )
 
     @classmethod
     def _log_serializer(cls, _obj, **kwargs):

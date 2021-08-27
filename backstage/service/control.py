@@ -4,6 +4,7 @@ from backstage.utils.db_handler import DBHandler
 from backstage.service.fetch_case_data import FetchCaseData
 from backstage.service.send_request import SendRequest
 from backstage.service.initialization import Initialization
+from backstage.service.after_request_handler import AfterRequestHandler
 
 
 class Control:
@@ -24,6 +25,12 @@ class Control:
         # 发送请求
         _send_request = SendRequest(_pre_request_handler.df, session=session(), **kwargs)
         _send_request.normal_run()
+
+        # 请求后处理
+        _after_request_handler = AfterRequestHandler(_fetch_case_data.df, **kwargs)
+        _after_request_handler.normal_run()
+
+        return
 
 
 if __name__ == '__main__':

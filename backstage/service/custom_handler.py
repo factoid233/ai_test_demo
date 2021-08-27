@@ -39,3 +39,15 @@ class CustomPreRequest:
 
     def vehicle_license(self):
         return self.df
+
+
+class CustomAfterRequest:
+    """
+    传入 df 的key 为数据库用例表中对应的字段
+    """
+    def __init__(self, df, **kwargs):
+        self.df = df
+        self.kwargs = kwargs
+
+    def vehicle_license(self):
+        return self.df
