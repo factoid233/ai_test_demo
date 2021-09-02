@@ -61,8 +61,9 @@ class SendRequest:
                                             data=series['request_post_form_body'],
                                             json=series['request_post_json_body'])
             response.raise_for_status()
-            self.logger.info(index, params=series['request_get_body'], url=series['env_url'],
-                             response_text=response.text, latency=response.elapsed.total_seconds())
+            self.logger.info(index)
+            # self.logger.info(index, params=series['request_get_body'], url=series['env_url'],
+            #                  response_text=response.text, latency=response.elapsed.total_seconds())
         except httpx.TimeoutException as exc:
             error = "{}".format(client.timeout)
         except httpx.HTTPStatusError as exc:
@@ -72,7 +73,7 @@ class SendRequest:
             error = sys.exc_info()[0].__doc__.strip()
         finally:
             if error:
-                self.logger.error(error)
+                self.logger.error(error, **series.to_dict())
         if response is not None:
             self.df.at[index, 'response_text'] = response.text
             self.df.at[index, 'response_latency'] = response.elapsed.total_seconds()

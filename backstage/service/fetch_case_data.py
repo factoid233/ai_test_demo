@@ -10,6 +10,7 @@ from backstage.model import case_models
 from backstage.service.custom_handler import CustomStmt
 from backstage.utils.common import get_class_functions
 from backstage.utils.db_handler import DBHandler
+from backstage.dao.def_type import DefTypeHandler
 
 
 class FetchCaseData:
@@ -17,6 +18,7 @@ class FetchCaseData:
     _model = None
     _stmt = None
     df: pd.DataFrame = None
+    testfunc_type = None
 
     def __init__(self, testfunc, session, **kwargs):
         self.testfunc = testfunc

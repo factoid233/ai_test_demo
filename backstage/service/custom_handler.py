@@ -43,7 +43,10 @@ class CustomPreRequest:
 
 class CustomAfterRequest:
     """
-    传入 df 的key 为数据库用例表中对应的字段
+    传入 df 的key 为
+    ['env_url', 'request_headers', 'request_get_body', 'request_method',
+       'request_post_form_body', 'request_post_json_body', 'response_text',
+       'response_latency']
     """
     def __init__(self, df, **kwargs):
         self.df = df

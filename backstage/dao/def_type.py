@@ -10,5 +10,11 @@ class DefTypeHandler:
 
     def get_timeout(self, testfunc):
         stmt = select(DefType.timeout).where(DefType.testfunc == testfunc)
-        res: dict = DBHandler.query_special_fields_result(self.session, stmt)
+        res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
         return res
+
+    def get_type(self, testfunc):
+        stmt = select(DefType.type).where(DefType.testfunc == testfunc)
+        res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
+        return res
+

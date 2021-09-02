@@ -28,7 +28,7 @@ class DefEnv(Base):
     request_get_body = Column(JSON, comment="请求get参数")
     request_post_form_body = Column(JSON, comment="请求post form参数")
     request_post_json_body = Column(JSON, comment="请求post json参数")
-    expected_actual_mapping = Column(String(255), comment="预期结果与实际结果映射 {'expected':'actual jsonpath $.data.xxx'}")
+    expected_actual_mapping = Column(JSON, comment="预期结果与实际结果映射 {'expected':'actual jsonpath $.data.xxx'}")
     remark = Column(String(255), comment="备注")
     enabled = Column(SmallInteger, server_default=text("1"), comment="1 激活，2 禁用")
     created_time = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))

@@ -25,3 +25,18 @@ encrypt_key = {
         'mortgage_register': ['抵押权人姓名/名称', '身份证明名称/号码']
     }
 }
+
+# 复杂字段
+complex_field = {
+    'daben_back': [
+        'remark', 'reissue', 'exchange',
+        'correction', 'change_record', 'pledge_record', 'serial_number',
+        'endorse_delete', 'guo_hu_deng_ji', 'cancel_mortgage',
+        'change_register', 'mortgage_register', 'transfer_register',
+        'discharge_mortgage', 'discharge_pledge_record'],
+    'daben_front': [
+        'transfer_reg_summary'
+    ]
+}
+
+

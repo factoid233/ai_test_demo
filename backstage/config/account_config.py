@@ -21,7 +21,7 @@ db_cdas = {
 }
 db_local = {
     'db': 'test_data',
-    'host': '172.16.1.167',
+    'host': '10.100.1.167',
     'user': os.getenv('DB_172_USER'),
     'pwd': os.getenv('DB_172_PWD'),
     'port': 3306

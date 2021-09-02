@@ -105,3 +105,20 @@ class DBHandler:
             return res[0]
         else:
             return None
+
+    @classmethod
+    def query_special_fields_result_no_key(cls, session, stmt, params=None):
+        """
+        适用于指定字段的查询语句
+        select(DefEnv.testfunc, DefEnv.request_headers,).where(DefEnv.testfunc == self.testfunc).where(DefEnv.env_en == self.env_alias)
+        :param session:
+        :param stmt:
+        :param params:
+        :return:
+        """
+        results = session.execute(stmt, params)
+        res_values = results.fetchone()
+        res1 = cls.jsonify_query_model_result(res_values)
+        if res1:
+            return res1[0]
+        return None

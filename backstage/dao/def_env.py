@@ -23,3 +23,8 @@ class DefEnvHandler:
         )
         res: dict = DBHandler.query_special_fields_result(self.session, stmt)
         return res
+
+    def get_expected_actual_mapping(self, testfunc, env_en):
+        stmt = select(DefEnv.expected_actual_mapping).where(DefEnv.testfunc == testfunc).where(DefEnv.env_en == env_en)
+        res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
+        return res
