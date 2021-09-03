@@ -127,20 +127,28 @@ class AfterRequestHandler:
             response_json = None
         split_dict = {}
         for key, jspath in mapping.items():
-            split_dict[key] = cls.extract_value_by_jsonpath(response_json, jspath, testfunc)
+            split_dict[key] = cls.extract_value_by_jsonpath(response_json, jspath, testfunc, key)
+        if not set(split_dict.keys()) <= set(df.keys()):
+            for key in split_dict.keys():
+                if key not in df.keys():
+                    df[key] = None
         df.at[index, split_dict.keys()] = split_dict.values()
         return series
 
     @classmethod
-    def extract_value_by_jsonpath(cls, response_json, jspath, testfunc):
+    def extract_value_by_jsonpath(cls, response_json, jspath, testfunc, key):
         extract_values = json_path(response_json, jspath)
         if extract_values:
             # 不是False
-            if testfunc not in complex_field.keys():
+            if testfunc in complex_field.keys() and key in complex_field[testfunc]:
+                # 复杂字段
+                if len(extract_values) == 1 and isinstance(extract_values[0], list):
+                    # 处理转移登记摘要字段
+                    return extract_values[0]
+                return extract_values
+            else:
                 # 简单字段
                 extract_value = extract_values[0]
                 return extract_value
-            else:
-                # 复杂字段
-                return extract_values
+
         return None

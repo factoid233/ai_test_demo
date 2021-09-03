@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import copy
 import hashlib
-import json
+import orjson
 import re
 import uuid
 
@@ -25,8 +25,8 @@ def str_to_json(data):
     if is_json is False:
         return False
     try:
-        return json.loads(data)
-    except (json.JSONDecodeError, TypeError):
+        return orjson.loads(data)
+    except (orjson.JSONDecodeError, TypeError):
         return False
 
 

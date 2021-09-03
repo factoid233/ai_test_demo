@@ -8,10 +8,13 @@ from structlog import getLogger
 
 from backstage.config.common_config import sema_num_request, request_timeout
 from backstage.dao.def_type import DefTypeHandler
+from backstage.service.custom_exception import ApiConnectFail
 
 
 class SendRequest:
     df = None
+    _exception = set()
+    _exception_num = 0
 
     def __init__(self, df, session, **kwargs):
         self.kwargs = kwargs
@@ -61,9 +64,16 @@ class SendRequest:
                                             data=series['request_post_form_body'],
                                             json=series['request_post_json_body'])
             response.raise_for_status()
-            self.logger.info(index)
-            # self.logger.info(index, params=series['request_get_body'], url=series['env_url'],
-            #                  response_text=response.text, latency=response.elapsed.total_seconds())
+            if self._exception_num < 10:
+                self._exception.add(response.text)
+                self._exception_num += 1
+            else:
+                if len(self._exception) == 1:
+                    self.logger.error(response.text, exc_info=True, stack_info=True)
+                    raise ApiConnectFail('接口连接失败，可能接口未开启')
+
+            self.logger.info(index, latency=response.elapsed.total_seconds(), **series.to_dict())
+
         except httpx.TimeoutException as exc:
             error = "{}".format(client.timeout)
         except httpx.HTTPStatusError as exc:
@@ -73,7 +83,7 @@ class SendRequest:
             error = sys.exc_info()[0].__doc__.strip()
         finally:
             if error:
-                self.logger.error(error, **series.to_dict())
+                self.logger.error(error, exc_info=True, stack_info=True, **series.to_dict())
         if response is not None:
             self.df.at[index, 'response_text'] = response.text
             self.df.at[index, 'response_latency'] = response.elapsed.total_seconds()

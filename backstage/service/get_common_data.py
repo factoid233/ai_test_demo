@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from backstage.config.common_config import complex_field
 from backstage.dao.def_env import DefEnvHandler
 from backstage.dao.def_type import DefTypeHandler
 
@@ -27,3 +28,9 @@ class GetCommonData:
     def query_expected_actual_mapping(self):
         res = DefEnvHandler(self._session).get_expected_actual_mapping(testfunc=self._testfunc, env_en=self._env_en)
         self.common_data['expected_actual_mapping'] = res
+
+    @staticmethod
+    def is_complex_field(testfunc, key):
+        if testfunc in complex_field.keys() and key in complex_field[testfunc]:
+            return True
+        return False

@@ -50,7 +50,7 @@ class Control:
         # 统计数据
         _data_statistic = DataStatistic(df_actual=_after_request_handler.df_actual,
                                         df_expect=_after_request_handler.df_expect,
-                                        df_compare=_compare_data.df,
+                                        df_compare=_compare_data.dfs,
                                         **kwargs)
         _data_statistic.normal_run()
 
@@ -61,5 +61,6 @@ if __name__ == '__main__':
     import uuid
 
     x = Control()
-    x.run(testfunc='vehicle_license', limit=30, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
-    # x.run(testfunc='daben_back', limit=100, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
+    # x.run(testfunc='vehicle_license', limit=30, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
+    # x.run(testfunc='daben_front', limit=100, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
+    x.run(testfunc='daben_back', limit=100, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
