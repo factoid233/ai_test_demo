@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from itertools import zip_longest
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 
@@ -86,7 +86,7 @@ class CompareData:
         self.dfs = {'simple': df_simple, **_dict_complex}
         return self
 
-    def complex_field_process(self, act, exp, index_main) -> list:
+    def complex_field_process(self, act, exp, index_main) -> List[dict]:
         results = []
         complex_first_act = act
         # 暂时只处理预期结果反序列化json，不处理接口返回结果
@@ -102,5 +102,9 @@ class CompareData:
                     temp[key] = False
                 else:
                     temp[key] = self.compare_value(data_act=act1[key], data_exp=exp1[key])
+            # 如果exp1为空，act1有值仅展示， 即 识别结果比人看出的结果多，多出的识别结果仅展示不统计
+            if not exp1 and act1:
+                for key, value in act1.items():
+                    temp[key] = 'skip'
             results.append(temp)
         return results

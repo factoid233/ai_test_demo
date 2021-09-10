@@ -39,4 +39,15 @@ complex_field = {
     ]
 }
 
+# 结果表格展示额外字段
+extra_keys = {'id', 'sign', 'pic_url', 'url', 'created_time'}
 
+# 统计字段翻译
+simple_translation_mapper = {
+    'accuracy_weight_mean': '加权平均精度',
+    'latency_mean': '平均耗时',
+    'latency_P70': '耗时P70',
+    'latency_P90': '耗时P90',
+    'latency_P95': '耗时P95',
+    'latency_P99': '耗时P99'
+}

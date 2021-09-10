@@ -20,6 +20,7 @@ class GetCommonData:
     def normal_run(self):
         self.query_testfunc_type()
         self.query_expected_actual_mapping()
+        self.query_translation_mapping()
 
     def query_testfunc_type(self):
         testfunc_type = DefTypeHandler(self._session).get_type(self._testfunc)
@@ -28,6 +29,10 @@ class GetCommonData:
     def query_expected_actual_mapping(self):
         res = DefEnvHandler(self._session).get_expected_actual_mapping(testfunc=self._testfunc, env_en=self._env_en)
         self.common_data['expected_actual_mapping'] = res
+
+    def query_translation_mapping(self):
+        res = DefTypeHandler(self._session).get_translation_mapping(testfunc=self._testfunc)
+        self.common_data['translation_mapping'] = res
 
     @staticmethod
     def is_complex_field(testfunc, key):

@@ -64,13 +64,8 @@ class SendRequest:
                                             data=series['request_post_form_body'],
                                             json=series['request_post_json_body'])
             response.raise_for_status()
-            if self._exception_num < 10:
-                self._exception.add(response.text)
-                self._exception_num += 1
-            else:
-                if len(self._exception) == 1:
-                    self.logger.error(response.text, exc_info=True, stack_info=True)
-                    raise ApiConnectFail('接口连接失败，可能接口未开启')
+            self._exception.add(response.text)
+            self._exception_num += 1
 
             self.logger.info(index, latency=response.elapsed.total_seconds(), **series.to_dict())
 
@@ -83,7 +78,15 @@ class SendRequest:
             error = sys.exc_info()[0].__doc__.strip()
         finally:
             if error:
-                self.logger.error(error, exc_info=True, stack_info=True, **series.to_dict())
+                self._exception.add(error)
+                self._exception_num += 1
+                self.df.at[index, 'error'] = error
+                self.logger.error(error, exc_info=False, stack_info=False, **series.to_dict())
+        if self._exception_num > 10 and len(self._exception) < 3:
+            exception_msg = "\t".join(self._exception)
+            msg = f'接口连接失败，可能接口未开启 Detail:\t{exception_msg}'
+            raise ApiConnectFail(msg)
         if response is not None:
             self.df.at[index, 'response_text'] = response.text
             self.df.at[index, 'response_latency'] = response.elapsed.total_seconds()
+

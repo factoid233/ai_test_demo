@@ -18,3 +18,7 @@ class DefTypeHandler:
         res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
         return res
 
+    def get_translation_mapping(self, testfunc):
+        stmt = select(DefType.translation_mapping).where(DefType.testfunc == testfunc)
+        res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
+        return res

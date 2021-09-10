@@ -8,7 +8,7 @@ from backstage.service.after_request_handler import AfterRequestHandler
 from backstage.service.compare_data import CompareData
 from backstage.service.get_common_data import GetCommonData
 from backstage.service.data_statistic import DataStatistic
-
+from backstage.service.data_store import DataStore
 
 class Control:
     def __init__(self):
@@ -54,6 +54,13 @@ class Control:
                                         **kwargs)
         _data_statistic.normal_run()
 
+        # 生成表格
+        _data_store = DataStore(df_actual=_after_request_handler.df_actual,
+                                df_expected=_after_request_handler.df_expect,
+                                dict_compare_dfs=_compare_data.dfs,
+                                data_statistic=_data_statistic.statistic_data,
+                                **kwargs)
+        _data_store.normal_run()
         return
 
 
@@ -62,5 +69,5 @@ if __name__ == '__main__':
 
     x = Control()
     # x.run(testfunc='vehicle_license', limit=30, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
-    # x.run(testfunc='daben_front', limit=100, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
-    x.run(testfunc='daben_back', limit=100, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
+    x.run(testfunc='daben_front', limit=30, env_alias='dev_java', sema_num_request=10, uuid=uuid.uuid1().hex)
+    # x.run(testfunc='daben_back', limit=100, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)

@@ -11,7 +11,7 @@ class DataStatistic:
     """
     以测试类型分类，统计精度和耗时
     """
-    statistic_data = None
+    statistic_data: dict = None
 
     def __init__(self, df_actual, df_compare, testfunc, testfunc_type, expected_actual_mapping, **kwargs):
         self.df_actual = df_actual
@@ -66,13 +66,14 @@ class TestType1(TestTypeBase):
         results = {}
         result_accuracy: Dict[str, dict] = {}
         # 简单字段
-        _simple_df = self.df_compare.pop('simple')
+        _dict_compare_dfs_copy = self.df_compare.copy()
+        _simple_df = _dict_compare_dfs_copy.pop('simple')
         result_accuracy.update(self.simple_field(_simple_df))
 
         # 复杂字段
-        if self.df_compare:
+        if _dict_compare_dfs_copy:
             """不是空字典"""
-            result_accuracy.update(self.complex_field(self.df_compare))
+            result_accuracy.update(self.complex_field(_dict_compare_dfs_copy))
         results['accuracy_detail'] = result_accuracy
         results['accuracy_weight_mean'] = self.accuracy_statistic(result_accuracy)
         results.update(self.latency_statistic())

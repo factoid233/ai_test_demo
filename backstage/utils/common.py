@@ -6,6 +6,7 @@ import re
 import uuid
 
 import jsonpath
+from pathlib import Path
 
 
 def str_to_json(data):
@@ -105,5 +106,13 @@ def json_path(json_obj, expr):
     return zh_res
 
 
+def get_project_root_path():
+    """
+    获取项目路径
+    :return:str
+    """
+    return Path(__file__).joinpath('../../..').resolve()
+
+
 if __name__ == '__main__':
-    str_to_json("123{")
+    print(get_project_root_path())
