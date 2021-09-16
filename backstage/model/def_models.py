@@ -9,6 +9,7 @@ class DefType(Base):
     testfunc = Column(String(255), comment='测试产品中文')
     testfunc_cn = Column(String(255), comment='测试产品英文')
     classify_mapping = Column(JSON, comment="图片分类一类补充映射")
+    classify_field = Column(String(255), comment="分类的字段名称")
     translation_mapping = Column(JSON, comment="翻译映射")
     type = Column(Integer, comment="测试产品类别  1普通 2事故车 4图片分类 5验证码")
     timeout = Column(Integer, server_default=text("5"), comment="请求超时时间")

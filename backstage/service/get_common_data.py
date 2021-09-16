@@ -21,6 +21,7 @@ class GetCommonData:
         self.query_testfunc_type()
         self.query_expected_actual_mapping()
         self.query_translation_mapping()
+        self.query_env_url()
 
     def query_testfunc_type(self):
         testfunc_type = DefTypeHandler(self._session).get_type(self._testfunc)
@@ -39,3 +40,7 @@ class GetCommonData:
         if testfunc in complex_field.keys() and key in complex_field[testfunc]:
             return True
         return False
+
+    def query_env_url(self):
+        res = DefEnvHandler(self._session).get_env_url(testfunc=self._testfunc, env_en=self._env_en)
+        self.common_data['env_url'] = res

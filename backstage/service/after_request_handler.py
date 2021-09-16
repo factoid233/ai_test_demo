@@ -8,7 +8,7 @@ from backstage.config.common_config import encrypt_key, complex_field
 from backstage.service.custom_handler import CustomAfterRequest
 from backstage.utils.common import generate_uuid, str_to_json, get_class_functions, json_path
 from backstage.utils.crypto_handler import Crypto
-
+from backstage.utils.compare_value import CompareValue
 
 class AfterRequestHandler:
     df_expect: pd.DataFrame = None
@@ -30,6 +30,7 @@ class AfterRequestHandler:
         self.custom_process()
         self.expected_data_process()
         self.actual_data_process()
+        self.process_level()
 
     def expected_data_process(self):
         self.decrypt_data()
@@ -152,3 +153,27 @@ class AfterRequestHandler:
                 return extract_value
 
         return None
+
+    def process_level(self):
+        level = self.kwargs.get('level')
+        if level is None:
+            return
+        else:
+            level = int(level)
+
+        def func(row: pd.Series):
+            level_value = row['level']
+            level_value_json = str_to_json(level_value)
+            if level_value_json is False:
+                return row
+            for key,flag in level_value_json.items():
+                if key in row.keys():
+                    cell = level_value_json[key]
+                    if CompareValue.str_to_num(cell) != level:
+                        row[key] = None
+            return row
+
+        self.df_expect = self.df_expect.apply(axis=1, func=func)
+        self.df_actual['level'] = self.df_expect['level']
+        self.df_actual = self.df_actual.apply(axis=1, func=func)
+        return

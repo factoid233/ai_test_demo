@@ -69,7 +69,7 @@ class CompareData:
         for (index_act, series_act), (index_exp, series_exp) in zip_longest(self.df_actual.iterrows(),
                                                                             self.df_expect.iterrows(),
                                                                             fillvalue=(None, None)):
-            _dict_simple = {}
+            _dict_simple = {'index': index_exp}
             for key in self._ea_mapping.keys():
                 if not GetCommonData.is_complex_field(self.testfunc, key):
                     _dict_simple[key] = self.compare_value(data_act=series_act[key], data_exp=series_exp[key])
@@ -80,7 +80,7 @@ class CompareData:
                     res = self.complex_field_process(act=series_act[key], exp=series_exp[key], index_main=index_exp)
                     _dict_complex[key].extend(res)
             _list_simple.append(_dict_simple)
-        df_simple = pd.DataFrame(_list_simple)
+        df_simple = pd.DataFrame(_list_simple).set_index(['index'])
         for key in _dict_complex.copy().keys():
             _dict_complex[key] = pd.DataFrame(_dict_complex[key])
         self.dfs = {'simple': df_simple, **_dict_complex}

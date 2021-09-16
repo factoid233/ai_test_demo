@@ -8,6 +8,7 @@ import pandas as pd
 
 from backstage.config.common_config import extra_keys, simple_translation_mapper
 from backstage.utils.common import str_to_json, get_project_root_path
+from backstage.utils.compare_value import CompareValue
 
 
 class DataStore:
@@ -122,8 +123,8 @@ class DataStore:
         data_simple1 = self.sheet_data_statistic_simple(data_simple)
         data_final = data_simple1 + data_complex1
         df = pd.DataFrame(data_final)
-        df_columns_mapper = {item: ''for item in df.keys()}
-        df.rename(columns=df_columns_mapper,inplace=True)
+        df_columns_mapper = {item: '' for item in df.keys()}
+        df.rename(columns=df_columns_mapper, inplace=True)
         self.sheets['统计'] = df
         return
 
@@ -151,15 +152,39 @@ class DataStore:
         return _list
 
     def sheet_data_statistic_complex_translate(self, data):
+        if self.testfunc_type == 1:
+            return self.sheet_data_statistic_complex_translate1(data)
+        elif self.testfunc_type == 4:
+            return self.sheet_data_statistic_complex_translate4(data)
+
+    def sheet_data_statistic_complex_translate1(self, data):
         index_mapper = {}
         translation_mapping = self.kwargs.get('translation_mapping')
+        if translation_mapping is None:
+            return {}
         for item in translation_mapping.keys():
             if item in data:
                 index_mapper[item] = translation_mapping[item]
             else:
                 for value1 in data.copy():
-                    if item in value1:
+                    if isinstance(item, str) and isinstance(value1, str) and item in value1:
                         index_mapper[value1] = value1.replace(item, translation_mapping[item])
+        return index_mapper
+
+    def sheet_data_statistic_complex_translate4(self, data):
+        index_mapper = {}
+        translation_mapping = self.kwargs.get('translation_mapping')
+        if translation_mapping is None:
+            return {}
+        for item in translation_mapping.keys():
+            if item in data:
+                index_mapper[item] = translation_mapping[item]
+            else:
+                for value1 in data.copy():
+                    item11 = CompareValue.str_to_num(item)
+                    value11 = CompareValue.str_to_num(value1)
+                    if item11 == value11:
+                        index_mapper[value1] = translation_mapping[item]
         return index_mapper
 
     @classmethod

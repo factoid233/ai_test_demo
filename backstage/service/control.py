@@ -10,6 +10,7 @@ from backstage.service.get_common_data import GetCommonData
 from backstage.service.data_statistic import DataStatistic
 from backstage.service.data_store import DataStore
 
+
 class Control:
     def __init__(self):
         Initialization.log_init()
@@ -51,6 +52,7 @@ class Control:
         _data_statistic = DataStatistic(df_actual=_after_request_handler.df_actual,
                                         df_expect=_after_request_handler.df_expect,
                                         df_compare=_compare_data.dfs,
+                                        session=session(),
                                         **kwargs)
         _data_statistic.normal_run()
 
@@ -61,6 +63,7 @@ class Control:
                                 data_statistic=_data_statistic.statistic_data,
                                 **kwargs)
         _data_store.normal_run()
+        session.remove()
         return
 
 
@@ -68,6 +71,6 @@ if __name__ == '__main__':
     import uuid
 
     x = Control()
-    # x.run(testfunc='vehicle_license', limit=30, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
-    x.run(testfunc='daben_front', limit=30, env_alias='dev_java', sema_num_request=10, uuid=uuid.uuid1().hex)
-    # x.run(testfunc='daben_back', limit=100, env_alias='dev_java', sema_num_request=5, uuid=uuid.uuid1().hex)
+    # x.run(testfunc='vehicle_license', limit=30, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex, level=1, timeout=10)
+    # x.run(testfunc='daben_front', limit=30, env_alias='dev_java', sema_num_request=10, uuid=uuid.uuid1().hex)
+    x.run(testfunc='classify_pic', limit_each=10, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex)

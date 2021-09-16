@@ -13,8 +13,10 @@ from backstage.service.custom_exception import ApiConnectFail
 
 class SendRequest:
     df = None
-    _exception = set()
-    _exception_num = 0
+    _exception = []
+    limit_num = 10
+    _exception_normal_response = set()
+    _exception_normal_response_num = 0
 
     def __init__(self, df, session, **kwargs):
         self.kwargs = kwargs
@@ -40,6 +42,10 @@ class SendRequest:
             await asyncio.gather(*tasks)
 
     def get_timeout(self):
+        timeout = self.kwargs.get('timeout')
+        if timeout and isinstance(timeout, int):
+            self.logger.info(f'开启自定义耗时 timeout={timeout}')
+            return timeout
         testfunc = self.kwargs.get('testfunc')
         return DefTypeHandler(self.session).get_timeout(testfunc)
 
@@ -64,10 +70,13 @@ class SendRequest:
                                             data=series['request_post_form_body'],
                                             json=series['request_post_json_body'])
             response.raise_for_status()
-            self._exception.add(response.text)
-            self._exception_num += 1
-
-            self.logger.info(index, latency=response.elapsed.total_seconds(), **series.to_dict())
+            if self._exception_normal_response_num < self.limit_num:
+                self._exception_normal_response.add(response.text)
+                self._exception_normal_response_num += 1
+                self._exception = []
+            else:
+                pass
+            self.logger.info(index, latency=response.elapsed.total_seconds(), response_text=response.text, **series.to_dict())
 
         except httpx.TimeoutException as exc:
             error = "{}".format(client.timeout)
@@ -78,15 +87,17 @@ class SendRequest:
             error = sys.exc_info()[0].__doc__.strip()
         finally:
             if error:
-                self._exception.add(error)
-                self._exception_num += 1
+                self._exception_normal_response_num = 0
+                self._exception.append(error)
                 self.df.at[index, 'error'] = error
                 self.logger.error(error, exc_info=False, stack_info=False, **series.to_dict())
-        if self._exception_num > 10 and len(self._exception) < 3:
+        if len(self._exception) >= self.limit_num and set(self._exception) == 1:
             exception_msg = "\t".join(self._exception)
-            msg = f'接口连接失败，可能接口未开启 Detail:\t{exception_msg}'
+            msg = f"接口连接失败，可能接口({series['env_url']})未开启 Detail:\t{exception_msg}"
+            raise ApiConnectFail(msg)
+        if self._exception_normal_response_num >= self.limit_num and set(self._exception_normal_response) == 1:
+            msg = f"接口连接失败，可能接口({series['env_url']})未开启 Detail:\t{response.text}"
             raise ApiConnectFail(msg)
         if response is not None:
             self.df.at[index, 'response_text'] = response.text
             self.df.at[index, 'response_latency'] = response.elapsed.total_seconds()
-

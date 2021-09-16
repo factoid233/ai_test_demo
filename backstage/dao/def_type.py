@@ -22,3 +22,13 @@ class DefTypeHandler:
         stmt = select(DefType.translation_mapping).where(DefType.testfunc == testfunc)
         res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
         return res
+
+    def get_classify_mapping(self, testfunc):
+        stmt = select(DefType.classify_mapping).where(DefType.testfunc == testfunc)
+        res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
+        return res
+
+    def get_classify_field(self, testfunc):
+        stmt = select(DefType.classify_field).where(DefType.testfunc == testfunc)
+        res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
+        return res

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import numpy as np
 
 
 class CompareValue:
@@ -28,7 +29,7 @@ class CompareValue:
         判断字符串 _str 是否为数字，如果是数字转为数值格式
         :return:
         """
-        if isinstance(data, (int, float)):
+        if isinstance(data, (int, float, np.int64)):
             return data
         if not isinstance(data, str):
             raise TypeError(f'传入数据({type(data)})非字符串类型')
