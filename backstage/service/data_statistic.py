@@ -164,7 +164,6 @@ class TestType1(TestTypeBase):
             result_accuracy.update(self.complex_field(_dict_compare_dfs_copy))
         results['accuracy_detail'] = result_accuracy
         results['accuracy_weight_mean'] = self.accuracy_statistic(result_accuracy)
-        # results.update(self.latency_statistic())
         self.data = results
         return
 

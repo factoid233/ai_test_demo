@@ -155,7 +155,7 @@ class DataStore:
     def sheet_data_statistic_complex_translate(self, data):
         if self.testfunc_type == 1:
             return self.sheet_data_statistic_complex_translate1(data)
-        elif self.testfunc_type == 4:
+        elif self.testfunc_type in (4, 5):
             return self.sheet_data_statistic_complex_translate4(data)
 
     def sheet_data_statistic_complex_translate1(self, data):
@@ -190,6 +190,11 @@ class DataStore:
 
     @classmethod
     def sheet_data_statistic_simple(cls, data: dict):
+        """
+        平均加权精度、耗时格式化
+        :param data:
+        :return:
+        """
         _list = []
         for key, value in data.items():
             if key in simple_translation_mapper.keys():
