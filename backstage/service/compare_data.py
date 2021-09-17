@@ -56,6 +56,10 @@ class CompareData:
             return False
         elif data1_type == 'str' and data2_type == 'str':
             return CompareValue.compare_str(data_act, data_exp)
+        elif data1_type == 'other' and data2_type != 'other':
+            return False
+        elif data1_type != 'other' and data2_type == 'other':
+            return False
         else:
             raise RuntimeError(f'暂不支持比较{data_act} {data_exp}')
 

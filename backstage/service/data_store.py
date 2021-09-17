@@ -29,7 +29,7 @@ class DataStore:
         """
 
         self.sheet_data_statistic()
-        if self.testfunc_type in (1,):
+        if self.testfunc_type in (1, 4, 5):
             self.test_type1()
         self.translation_words()
         self.sheet_error()
@@ -141,7 +141,8 @@ class DataStore:
             # 翻译成中文
             index_src = df.index
             index_mapper = self.sheet_data_statistic_complex_translate(index_src)
-            df.rename(index_mapper, inplace=True)
+            if index_mapper:
+                df.rename(index_mapper, inplace=True)
 
             data1 = df.to_dict('split')
             columns = ['字段名称'] + data1['columns']

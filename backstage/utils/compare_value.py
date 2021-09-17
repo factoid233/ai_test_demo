@@ -55,7 +55,8 @@ class CompareValue:
                 return 'num'
             else:
                 return 'str'
-        raise RuntimeError(f'{data} 非数字和字符串类型')
+        return 'other'
+        # raise RuntimeError(f'{data} 非数字和字符串类型')
 
 
 if __name__ == '__main__':

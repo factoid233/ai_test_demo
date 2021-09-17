@@ -73,4 +73,6 @@ if __name__ == '__main__':
     x = Control()
     # x.run(testfunc='vehicle_license', limit=30, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex, level=1, timeout=10)
     # x.run(testfunc='daben_front', limit=30, env_alias='dev_java', sema_num_request=10, uuid=uuid.uuid1().hex)
-    x.run(testfunc='classify_pic', limit_each=10, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex)
+    # x.run(testfunc='classify_pic', limit_each=10, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex)
+    # x.run(testfunc='car_angle', limit_each=10, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex)
+    x.run(testfunc='captcha', limit_each=10, env_alias='dev_python', sema_num_request=3, uuid=uuid.uuid1().hex)

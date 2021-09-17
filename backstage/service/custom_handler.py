@@ -6,6 +6,7 @@ from sqlalchemy import select
 from backstage.model import case_models
 from backstage.utils.db_handler import DBHandler
 
+
 class CustomStmt:
     """
     自定义取数据方法
@@ -24,19 +25,39 @@ class CustomStmt:
         df = pd.DataFrame(res)
         return df
 
-    def classify_pic(self):
-        model = case_models.case_classify_pic
+    def limit_each_common(self, model):
         stmt = select(model)
         res = DBHandler.query_orm_all_field_results(self.session, stmt=stmt)
         df = pd.DataFrame(res)
+        classify_field = self.kwargs.get('classify_field')
 
         # 限制分类数量
         limit_each = self.kwargs.get('limit_each')
         if limit_each is None:
             return df
         limit_each = self.kwargs.get('limit_each')
-        df1 = df.groupby('classify').head(limit_each)
+        df1 = df.groupby(classify_field).head(limit_each)
         return df1
+
+    def classify_pic(self):
+        model = case_models.case_classify_pic
+        return self.limit_each_common(model)
+
+    def car_angle(self):
+        model = case_models.case_car_angle
+        return self.limit_each_common(model)
+
+    def car_in_pic(self):
+        model = case_models.case_car_in_pic
+        return self.limit_each_common(model)
+
+    def fanpai(self):
+        model = case_models.case_fanpai
+        return self.limit_each_common(model)
+
+    def captcha(self):
+        model = case_models.case_captcha
+        return self.limit_each_common(model)
 
 
 class CustomPreRequest:

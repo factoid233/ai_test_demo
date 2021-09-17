@@ -56,14 +56,19 @@ class SendRequest:
     async def req_one(self, client: httpx.AsyncClient, series: pd.Series, index):
         """
         url,method,params,data,header,json
+        连续请求返回的响应为相同的结果或者为相同的异常，会报出接口未开启的异常
         @param index:
         @param client:
         @param series:
         @return:
         """
         response = None
-        error = None
+        error_msg = None
+        exception_type = None
         try:
+            for key in ('request_get_body', 'request_post_form_body', 'request_post_json_body'):
+                if not series[key]:
+                    series[key] = None
             response = await client.request(method=series['request_method'].lower(),
                                             url=series['env_url'],
                                             params=series['request_get_body'],
@@ -76,26 +81,29 @@ class SendRequest:
                 self._exception = []
             else:
                 pass
-            self.logger.info(index, latency=response.elapsed.total_seconds(), response_text=response.text, **series.to_dict())
+            self.logger.info(index, latency=response.elapsed.total_seconds(), response_text=response.text,
+                             **series.to_dict())
 
         except httpx.TimeoutException as exc:
-            error = "{}".format(client.timeout)
+            error_msg = "{}".format(client.timeout)
+            exception_type = 'timeout'
         except httpx.HTTPStatusError as exc:
             response = exc.response
-            error = f"Error response {exc.response.status_code} while requesting {exc.request.url!r}."
+            exception_type = 'http_status_error'
+            error_msg = f"Error response {exc.response.status_code} while requesting {exc.request.url!r}."
         except httpx.HTTPError as exc:
-            error = sys.exc_info()[0].__doc__.strip()
+            error_msg = sys.exc_info()[0].__doc__.strip()
+            exception_type = 'http_error'
         finally:
-            if error:
+            if error_msg:
                 self._exception_normal_response_num = 0
-                self._exception.append(error)
-                self.df.at[index, 'error'] = error
-                self.logger.error(error, exc_info=False, stack_info=False, **series.to_dict())
-        if len(self._exception) >= self.limit_num and set(self._exception) == 1:
-            exception_msg = "\t".join(self._exception)
-            msg = f"接口连接失败，可能接口({series['env_url']})未开启 Detail:\t{exception_msg}"
+                self._exception.append(exception_type)
+                self.df.at[index, 'error'] = error_msg
+                self.logger.error(error_msg, exc_info=False, stack_info=False, **series.to_dict())
+        if len(self._exception) >= self.limit_num and len(set(self._exception)) == 1:
+            msg = f"接口连接失败，可能接口({series['env_url']})未开启 Detail:\t{error_msg}"
             raise ApiConnectFail(msg)
-        if self._exception_normal_response_num >= self.limit_num and set(self._exception_normal_response) == 1:
+        if self._exception_normal_response_num >= self.limit_num and len(set(self._exception_normal_response)) == 1:
             msg = f"接口连接失败，可能接口({series['env_url']})未开启 Detail:\t{response.text}"
             raise ApiConnectFail(msg)
         if response is not None:

@@ -3,6 +3,7 @@ from sqlalchemy import select
 
 from backstage.model.def_models import DefEnv
 from backstage.utils.db_handler import DBHandler
+from backstage.service.custom_exception import NotExist
 
 
 class DefEnvHandler:
@@ -22,6 +23,10 @@ class DefEnvHandler:
                 .where(DefEnv.env_en == env_alias)
         )
         res: dict = DBHandler.query_special_fields_result(self.session, stmt)
+        if not res:
+            msg = f"{testfunc}, {env_alias} 未配置 ['request_headers', 'request_get_body', 'request_post_form_body', " \
+                  f"'request_post_json_body','request_method'] "
+            raise NotExist(msg)
         return res
 
     def get_expected_actual_mapping(self, testfunc, env_en):
