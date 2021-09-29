@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import time
+
 from backstage.service.pre_request_handler import PreRequestHandler
 from backstage.utils.db_handler import DBHandler
 from backstage.service.fetch_case_data import FetchCaseData
@@ -9,6 +11,7 @@ from backstage.service.compare_data import CompareData
 from backstage.service.get_common_data import GetCommonData
 from backstage.service.data_statistic import DataStatistic
 from backstage.service.data_store import DataStore
+from backstage.service.db_service import scoped_session
 
 
 class Control:
@@ -16,7 +19,8 @@ class Control:
         Initialization.log_init()
 
     def run(self, **kwargs):
-        session = DBHandler.create_scoped_session('local_db_url')
+        start = time.time()
+        session = scoped_session
 
         # 获取公共参数字段
         _get_common_data = GetCommonData(session=session(), **kwargs)
@@ -55,7 +59,8 @@ class Control:
                                         session=session(),
                                         **kwargs)
         _data_statistic.normal_run()
-
+        end = time.time()
+        print((end-start)/60,'mins')
         # 生成表格
         _data_store = DataStore(df_actual=_after_request_handler.df_actual,
                                 df_expected=_after_request_handler.df_expect,
@@ -71,8 +76,8 @@ if __name__ == '__main__':
     import uuid
 
     x = Control()
-    # x.run(testfunc='vehicle_license', limit=30, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex, level=1, timeout=10)
-    # x.run(testfunc='daben_front', limit=30, env_alias='dev_java', sema_num_request=10, uuid=uuid.uuid1().hex)
-    # x.run(testfunc='classify_pic', limit_each=10, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex)
+    x.run(testfunc='vehicle_license', limit=None, env_alias='dev_java_ms', sema_num_request=2, uuid=uuid.uuid1().hex, level=None, timeout=5)
+    # x.run(testfunc='daben_front', limit=10, env_alias='dev_java_ms', sema_num_request=4, uuid=uuid.uuid1().hex)
+    # x.run(testfunc='classify_pic', env_alias='dev_java_zwang', sema_num_request=4, uuid=uuid.uuid1().hex,timeout=10, limit_each=1000)
     # x.run(testfunc='car_angle', limit_each=10, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex)
-    x.run(testfunc='captcha', limit_each=10, env_alias='dev_python', sema_num_request=3, uuid=uuid.uuid1().hex)
+    # x.run(testfunc='captcha', limit_each=10, env_alias='dev_python', sema_num_request=3, uuid=uuid.uuid1().hex)

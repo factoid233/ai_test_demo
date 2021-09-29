@@ -32,3 +32,8 @@ class DefTypeHandler:
         stmt = select(DefType.classify_field).where(DefType.testfunc == testfunc)
         res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
         return res
+
+    def get_all_zh_name(self):
+        stmt = select(DefType.testfunc, DefType.testfunc_cn)
+        res: dict = DBHandler.query_special_fields_results(self.session, stmt)
+        return res

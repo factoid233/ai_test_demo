@@ -38,3 +38,8 @@ class DefEnvHandler:
         stmt = select(DefEnv.env_url).where(DefEnv.testfunc == testfunc).where(DefEnv.env_en == env_en)
         res: dict = DBHandler.query_special_fields_result_no_key(self.session, stmt)
         return res
+
+    def get_all_env_url_env_name_testfunc(self):
+        stmt = select(DefEnv.testfunc, DefEnv.env_en, DefEnv.env_url)
+        res: dict = DBHandler.query_special_fields_results(self.session, stmt)
+        return res

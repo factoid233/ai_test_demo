@@ -10,16 +10,19 @@ import backstage.config.db_config as db_config
 
 class DBHandler:
     @staticmethod
-    def create_scoped_session(db_alias) -> sqlalchemy.orm.scoped_session:
+    def create_scoped_session(db_alias=None) -> sqlalchemy.orm.scoped_session:
         """
         db_config 命名中要以数据库的url要以 xxx_db_url形式命名
         :param db_alias: public_test_db_url cads_db_url
         :return:
         """
-        db_alias_set = set(filter(lambda x: 'db_url' in x, db_config.__dict__.keys()))
-        if db_alias not in db_alias_set:
-            raise KeyError(f'传值必须为 {db_alias_set} 其一')
-        db_url = getattr(db_config, db_alias)
+        if db_alias is None:
+            db_url = db_config.current_db_url
+        else:
+            db_alias_set = set(filter(lambda x: 'db_url' in x, db_config.__dict__.keys()))
+            if db_alias not in db_alias_set:
+                raise KeyError(f'传值必须为 {db_alias_set} 其一')
+            db_url = getattr(db_config, db_alias)
         engine = sqlalchemy.create_engine(db_url, **db_config.engine_config)
         session = sqlalchemy.orm.sessionmaker(bind=engine)
         _scoped_session = sqlalchemy.orm.scoped_session(session)

@@ -9,3 +9,8 @@ structlog==21.1.0
 orjson==3.6.3
 jsonpath==0.82
 xlsxwriter==3.0.1
+aioredis==2.0.0
+fastapi==0.68.1
+uvicorn==0.15.0
+celery==5.1.2
+redis==3.5.3

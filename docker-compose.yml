@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:6.2.5-alpine
+    container_name: ai_test_redis
+    restart: always
+    volumes:
+    - ./docker_config/redis.conf:/etc/redis/redis.conf
+    ports:
+    - 10001:6379
+    command: redis-server /etc/redis/redis.conf

@@ -34,6 +34,7 @@ class AfterRequestHandler:
 
     def expected_data_process(self):
         self.decrypt_data()
+        self.add_response_latency()
 
     def actual_data_process(self):
         self.split_datas()
@@ -176,4 +177,12 @@ class AfterRequestHandler:
         self.df_expect = self.df_expect.apply(axis=1, func=func)
         self.df_actual['level'] = self.df_expect['level']
         self.df_actual = self.df_actual.apply(axis=1, func=func)
+        return
+
+    def add_response_latency(self):
+        """
+        将实际结果中的耗时加入到预期结果中
+        :return:
+        """
+        self.df_expect['response_latency'] = self.df_actual['response_latency']
         return

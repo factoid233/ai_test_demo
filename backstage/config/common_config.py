@@ -40,7 +40,7 @@ complex_field = {
 }
 
 # 结果表格展示额外字段
-extra_keys = {'id', 'sign', 'pic_url', 'url', 'created_time'}
+extra_keys = {'id', 'sign', 'pic_url', 'url', 'response_latency', 'created_time'}
 
 # 统计字段翻译
 simple_translation_mapper = {
@@ -51,3 +51,9 @@ simple_translation_mapper = {
     'latency_P95': '耗时P95',
     'latency_P99': '耗时P99'
 }
+
+# web 页面收件人选择
+ai_email_receivers = [
+    'bxwang@che300.com', 'nxning@che300.com', 'xuzl@che300.com', 'ygzhou@che300.com', 'yxgao@che300.com',
+    'zqi@che300.com', 'zwang@che300.com', 'zye@che300.com'
+]

@@ -9,6 +9,8 @@ from structlog import getLogger
 from backstage.config.common_config import sema_num_request, request_timeout
 from backstage.dao.def_type import DefTypeHandler
 from backstage.service.custom_exception import ApiConnectFail
+from backstage.utils.redis_handler import AioRedisAsyncio
+from backstage.config.db_config import redis_expire, redis_url
 
 
 class SendRequest:
@@ -17,18 +19,21 @@ class SendRequest:
     limit_num = 10
     _exception_normal_response = set()
     _exception_normal_response_num = 0
+    _redis = None
 
     def __init__(self, df, session, **kwargs):
         self.kwargs = kwargs
         self.df = df
         self.session = session
         self.logger = getLogger(self.__class__).bind(uuid=kwargs.get('uuid'))
+        self.uuid = self.kwargs.get('uuid')
 
     def normal_run(self):
         asyncio.run(self.send_reqs())
         return self
 
     async def send_reqs(self):
+        self._redis = await AioRedisAsyncio.from_url(redis_url)
         sema_num = self.kwargs.get('sema_num_request', sema_num_request)
         self.logger.info(f'开始请求接口， 共开启 {sema_num}个并发')
         timeout = self.get_timeout()
@@ -36,10 +41,12 @@ class SendRequest:
         sema = asyncio.Semaphore(sema_num)
         async with httpx.AsyncClient(timeout=timeout) as client:
             tasks = []
-            for index, row in self.df.iterrows():
-                task = asyncio.create_task(self.req_sema(sema, client, row, index))
+            total = self.df.shape[0]
+            for count, (index, row) in enumerate(self.df.iterrows()):
+                task = asyncio.create_task(self.req_sema(sema, client, row, index, count, total))
                 tasks.append(task)
             await asyncio.gather(*tasks)
+        await self._redis.close()
 
     def get_timeout(self):
         timeout = self.kwargs.get('timeout')
@@ -49,11 +56,11 @@ class SendRequest:
         testfunc = self.kwargs.get('testfunc')
         return DefTypeHandler(self.session).get_timeout(testfunc)
 
-    async def req_sema(self, sema, client: httpx.AsyncClient, series: pd.Series, index):
+    async def req_sema(self, sema, client: httpx.AsyncClient, series: pd.Series, index, count, total):
         async with sema:
-            await self.req_one(client=client, series=series, index=index)
+            await self.req_one(client=client, series=series, index=index, count=count, total=total)
 
-    async def req_one(self, client: httpx.AsyncClient, series: pd.Series, index):
+    async def req_one(self, client: httpx.AsyncClient, series: pd.Series, index, count, total):
         """
         url,method,params,data,header,json
         连续请求返回的响应为相同的结果或者为相同的异常，会报出接口未开启的异常
@@ -81,9 +88,10 @@ class SendRequest:
                 self._exception = []
             else:
                 pass
+            # 设置进度条
+            await self.process_bar(count, total)
             self.logger.info(index, latency=response.elapsed.total_seconds(), response_text=response.text,
                              **series.to_dict())
-
         except httpx.TimeoutException as exc:
             error_msg = "{}".format(client.timeout)
             exception_type = 'timeout'
@@ -109,3 +117,10 @@ class SendRequest:
         if response is not None:
             self.df.at[index, 'response_text'] = response.text
             self.df.at[index, 'response_latency'] = response.elapsed.total_seconds()
+
+    async def process_bar(self, count, total):
+        _process_bar_before = await self._redis.get(self.uuid)
+        _process_bar = round(count / total, 4)
+        if _process_bar_before is None or float(_process_bar_before) < float(_process_bar):
+            await self._redis.set(self.uuid, _process_bar)
+            await self._redis.expire(self.uuid, redis_expire)

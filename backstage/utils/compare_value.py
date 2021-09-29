@@ -31,6 +31,8 @@ class CompareValue:
         """
         if isinstance(data, (int, float, np.int64)):
             return data
+        if data is None:
+            return ''
         if not isinstance(data, str):
             raise TypeError(f'传入数据({type(data)})非字符串类型')
         pattern1 = re.compile(r'^[-+]?[0-9]\d*$')
