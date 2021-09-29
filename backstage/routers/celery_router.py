@@ -40,6 +40,7 @@ async def get_all_envs():
         code = 2000
         msg = "success"
         data = {'test_info': results, 'email_receivers': ai_email_receivers}
+    scoped_session.remove()
     return dict(code=code, data=data, msg=msg)
 
 

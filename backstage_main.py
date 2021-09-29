@@ -2,17 +2,12 @@
 
 from fastapi import Depends, FastAPI
 
-from backstage.routers import testfunc_router, celery_router
+from backstage.routers import testfunc_router, celery_router, root_router
 
 app = FastAPI()
+app.include_router(root_router.router)
 app.include_router(testfunc_router.router)
 app.include_router(celery_router.router)
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World!"}
-
 
 if __name__ == "__main__":
     import uvicorn
