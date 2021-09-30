@@ -54,6 +54,5 @@ simple_translation_mapper = {
 
 # web 页面收件人选择
 ai_email_receivers = [
-    'bxwang@che300.com', 'nxning@che300.com', 'xuzl@che300.com', 'ygzhou@che300.com', 'yxgao@che300.com',
-    'zqi@che300.com', 'zwang@che300.com', 'zye@che300.com'
+    'xiaomin@demo.com', 'tom@icoud.com'
 ]

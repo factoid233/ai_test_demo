@@ -2,6 +2,7 @@
 import orjson
 import structlog
 import httpx
+import traceback
 from backstage.dao.def_env import DefEnvHandler
 
 
@@ -34,7 +35,10 @@ class Initialization:
         test_url = db.get_env_url(testfunc, env_alias)
         if test_url is None:
             return False, 4001, f"the api url of {testfunc} {env_alias} dose not exist"
-        res = httpx.post(test_url)
+        try:
+            res = httpx.post(test_url)
+        except httpx.HTTPError as e:
+            return False, 4002, f"{test_url} connect fail! {traceback.format_exc()}"
         if res.status_code != 200:
-            return False, 4002, f"{test_url} connect fail! may be api service did not start"
+            return False, 4002, f"{test_url} connect fail! may be api service did not start {res.text}"
         return True, None, None

@@ -1,0 +1,16 @@
+server {
+        listen 7000;
+        server_name localhost ai_test_nginx;
+        location /api {
+            proxy_pass http://ai_test_uvicorn:8080;
+        }
+
+        location / {
+            root /usr/share/nginx/html;
+       }
+
+       location ~ /static/(js|css){
+            root /usr/share/nginx/html;
+       }
+
+    }

@@ -76,7 +76,7 @@ if __name__ == '__main__':
     import uuid
 
     x = Control()
-    x.run(testfunc='vehicle_license', limit=None, env_alias='dev_java_ms', sema_num_request=2, uuid=uuid.uuid1().hex, level=None, timeout=5)
+    x.run(testfunc='vehicle_license', limit=None, env_alias='dev_python_ms', sema_num_request=6, uuid=uuid.uuid1().hex, level=None, timeout=5)
     # x.run(testfunc='daben_front', limit=10, env_alias='dev_java_ms', sema_num_request=4, uuid=uuid.uuid1().hex)
     # x.run(testfunc='classify_pic', env_alias='dev_java_zwang', sema_num_request=4, uuid=uuid.uuid1().hex,timeout=10, limit_each=1000)
     # x.run(testfunc='car_angle', limit_each=10, env_alias='dev_java', sema_num_request=3, uuid=uuid.uuid1().hex)

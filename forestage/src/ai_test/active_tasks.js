@@ -79,7 +79,7 @@ class ActiveTasks extends React.Component {
   stop_task(test_id) {
     let task = jp.query(this.state.data, `$[?(@.test_id=='${test_id}')]`);
     let task_id = task[0]['test_id']
-    let url = "/celery/stop_job/" + task_id;
+    let url = "/api/celery/stop_job/" + task_id;
     axios({
       method: "get",
       url: url,
@@ -92,7 +92,7 @@ class ActiveTasks extends React.Component {
     this.setState({data:data_temp});
   }
   get_process_bar(test_id){
-    let url = "/celery/get_process_bar/" + test_id
+    let url = "/api/celery/get_process_bar/" + test_id
     axios({
       method:"get",
       url:url
@@ -143,7 +143,7 @@ class ActiveTasks extends React.Component {
     return data2
   }
   get_active_jobs() {
-    const url = "/celery/active_jobs";
+    const url = "/api/celery/active_jobs";
     axios({
       method: "get",
       url: url,

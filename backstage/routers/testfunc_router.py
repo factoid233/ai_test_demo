@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from backstage.service.db_service import scoped_session
 
 router = APIRouter(
-    prefix="/api",
+    prefix="/testfunc",
     tags=["api"],
     responses={404: {"description": "Not found"}},
 )
@@ -39,11 +39,13 @@ async def pull_testfunc(
     msg = "success"
     data = None
     # 检查接口是否联通
-    check_http_code, other_code, other_msg = Initialization.check_api_alive(scoped_session(), testfunc, env_alias)
-    if check_http_code is False:
-        code = other_code
-        msg = other_msg
-    else:
+    # check_http_code, other_code, other_msg = Initialization.check_api_alive(scoped_session(), testfunc, env_alias)
+    # if check_http_code is False:
+    #     code = other_code
+    #     msg = other_msg
+    # else:
+        # pass
+    if 1:
         res = run_api_test.delay(**_kwargs)
         task_id = res.task_id
         data = {"task_id": task_id}

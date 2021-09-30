@@ -44,8 +44,8 @@ class RunTest extends React.Component {
     }
 
     request_data_envs() {
-        let uri = "/celery/get_all_envs";
-        axios.get(uri).then((response) => {
+        let uri = "/api/celery/get_all_envs";
+        axios.get(uri,{timeout:5000}).then((response) => {
             this.setState({
                 test_info: response.data.data.test_info,
                 email_receivers: response.data.data.email_receivers,
@@ -60,14 +60,15 @@ class RunTest extends React.Component {
     run_test = (data) => {
         let [testfunc, env_alias] = data['test_info']
         data['email_receivers'] = data['email_receivers'].join(",")
-        let uri = "/api/" + testfunc
+        let uri = "/api/testfunc/" + testfunc
+        // let uri = "/api/demo" + testfunc
         let kwargs = {
             env_alias: env_alias,
         }
         delete data['test_info']
         let _params = Object.assign(kwargs, data)
         // axios会自动过滤调undefined的key
-        axios.get(uri, {params: _params}).then((response) => {
+        axios.get(uri, {params: _params, timeout:5000}).then((response) => {
             let type = null;
             if (response.data.code === 2000) {
                 type = "success";

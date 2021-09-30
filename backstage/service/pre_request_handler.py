@@ -99,7 +99,7 @@ class PreRequestHandler:
     def normal_run(self):
         self.get_request_body()
         self.generate_sign()
-        self.sign_pic_url()
+        # self.sign_pic_url()
         self.reshape_data()
         self.custom_process()
         self.logger.info('请求前置处理 done')
