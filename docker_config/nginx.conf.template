@@ -1,6 +1,10 @@
 server {
         listen 7000;
         server_name localhost ai_test_nginx;
+        gzip on;
+        gzip_buffers 32 4k;
+        gzip_comp_level 6;
+        gzip_min_length 200;
         location /api {
             proxy_pass http://ai_test_uvicorn:8080;
         }
